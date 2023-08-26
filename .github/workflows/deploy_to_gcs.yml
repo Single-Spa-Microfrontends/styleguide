@@ -13,8 +13,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Install jq
+      run: sudo apt-get install jq
+
+    - name: Update config.json with secrets
+      run: |
+        jq '.username = "${{ secrets.DEPLOYER_USERNAME }}" | .password = "${{ secrets.DEPLOYER_PASSWORD }}"' config.json > temp.json
+        mv temp.json config.json
+
     - name: Install pnpm
-      run: curl -f https://get.pnpm.io/v6.js | node - add --global pnpm
+      run: curl -f https://get.pnpm.io/v8.js | node - add --global pnpm
 
     - name: Set up Node.js (if using Node.js for build)
       uses: actions/setup-node@v2
@@ -35,4 +43,11 @@ jobs:
 
     - name: Upload artifacts to GCS
       run: |
-        gsutil -m cp -r ./dist/* gs://${{ secrets.GCS_BUCKET_NAME }}/styleguide
+        gsutil -m cp -r ./dist/* gs://${{ secrets.GCS_BUCKET_NAME }}/${GITHUB_REPOSITORY}/${GITHUB_SHA}
+
+    - name: Update import map
+      run: |
+        curl -u ${{ secrets.DEPLOYER_USERNAME }}:${{ secrets.DEPLOYER_PASSWORD }} \
+        -d '{ "service":"@ssm/'"${GITHUB_REPOSITORY}"'", "url":"https://storage.googleapis.com/'"${GITHUB_REPOSITORY}"'/'"${GITHUB_SHA}"'/ssm-'"${GITHUB_REPOSITORY}"'.js" }' \
+        -X PATCH https://$DEPLOYER_HOST/services\?env=prod \
+        -H "Accept:application/json" -H "Content-Type:application/json" --fail --insecure -i
