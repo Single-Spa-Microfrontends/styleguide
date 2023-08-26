@@ -35,11 +35,11 @@ jobs:
 
     - name: Upload artifacts to GCS
       run: |
-        gsutil -m cp -r ./dist/* gs://${{ secrets.GCS_BUCKET_NAME }}/${GITHUB_REPOSITORY}/${GITHUB_SHA}
+        gsutil -m cp -r ./dist/* gs://${{ secrets.GCS_BUCKET_NAME }}/$GITHUB_REPOSITORY/$GITHUB_SHA
 
     - name: Update import map
       run: |
         curl -u ${{ secrets.DEPLOYER_USERNAME }}:${{ secrets.DEPLOYER_PASSWORD }} \
-        -d '{ "service":"@ssm/'"${GITHUB_REPOSITORY}"'", "url":"https://storage.googleapis.com/'"${GITHUB_REPOSITORY}"'/'"${GITHUB_SHA}"'/ssm-'"${GITHUB_REPOSITORY}"'.js" }' \
+        -d "{\"service\":\"@ssm/$GITHUB_REPOSITORY\", \"url\":\"https://storage.googleapis.com/$GITHUB_REPOSITORY/$GITHUB_SHA/ssm-$GITHUB_REPOSITORY.js\" }"
         -X PATCH https://${{secrets.DEPLOYER_HOST}}/services\?env=test \
         -H "Accept:application/json" -H "Content-Type:application/json" --fail --insecure -i
