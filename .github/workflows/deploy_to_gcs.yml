@@ -41,5 +41,5 @@ jobs:
       run: |
         curl -u ${{ secrets.DEPLOYER_USERNAME }}:${{ secrets.DEPLOYER_PASSWORD }} \
         -d '{ "service":"@ssm/'"$GITHUB_REPOSITORY"'", "url":"https://storage.googleapis.com/'"$GITHUB_REPOSITORY"'/'"$GITHUB_SHA"'/ssm-'"$GITHUB_REPOSITORY"'.js" }' \
-        -X PATCH "https://${{ secrets.DEPLOYER_HOST }}/services?env=test" \
+        -X PATCH "http://${{ secrets.DEPLOYER_HOST }}/services?env=test" \
         -H "Accept:application/json" -H "Content-Type:application/json" --fail --insecure
