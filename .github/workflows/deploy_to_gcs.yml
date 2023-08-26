@@ -13,14 +13,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install jq
-      run: sudo apt-get install jq
-
-    - name: Update config.json with secrets
-      run: |
-        jq '.username = "${{ secrets.DEPLOYER_USERNAME }}" | .password = "${{ secrets.DEPLOYER_PASSWORD }}"' config.json > temp.json
-        mv temp.json config.json
-
     - name: Install pnpm
       run: curl -f https://get.pnpm.io/v8.js | node - add --global pnpm
 
