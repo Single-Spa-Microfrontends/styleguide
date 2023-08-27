@@ -26,10 +26,22 @@ jobs:
       - name: Build
         run: pnpm run build
 
+      - name: Archive build output
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist/
+
   deploy-gcs:
     needs: setup-and-build
     runs-on: ubuntu-latest
     steps:
+      - name: Download build output
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+          path: dist/
+
       - name: Set up gcloud CLI
         uses: google-github-actions/setup-gcloud@v0.2.0
         with:
