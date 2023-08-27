@@ -58,7 +58,7 @@ jobs:
     steps:
       - name: Extract repo name
         run: |
-          REPOSITORY_NAME=$(basename $GITHUB_REPOSITORY)
+          echo "REPOSITORY_NAME=$(basename $GITHUB_REPOSITORY)" >> $GITHUB_ENV
 
       - name: Update import map
         run: |
