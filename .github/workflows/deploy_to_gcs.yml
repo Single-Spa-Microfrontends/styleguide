@@ -6,8 +6,7 @@ on:
       - main
 
 jobs:
-
-  setup:
+  setup-and-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,21 +20,11 @@ jobs:
         with:
           node-version: '18'  # or your preferred version
 
-      - name: Archive node_modules
-        uses: actions/upload-artifact@v2
-        with:
-          name: node_modules
-          path: node_modules/
-  
-  build:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download node_modules
+      - name: Download build output
         uses: actions/download-artifact@v2
         with:
-          name: node_modules
-          path: node_modules/
+          name: dist
+          path: dist/
     
       - name: Install dependencies
         run: pnpm install
