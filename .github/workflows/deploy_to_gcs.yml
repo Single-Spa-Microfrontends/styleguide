@@ -20,11 +20,23 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '18'  # or your preferred version
+
+      - name: Archive node_modules
+        uses: actions/upload-artifact@v2
+        with:
+          name: node_modules
+          path: node_modules/
   
   build:
     needs: setup
     runs-on: ubuntu-latest
     steps:
+      - name: Download node_modules
+        uses: actions/download-artifact@v2
+        with:
+          name: node_modules
+          path: node_modules/
+    
       - name: Install dependencies
         run: pnpm install
 
